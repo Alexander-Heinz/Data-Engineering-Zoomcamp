@@ -163,10 +163,25 @@ Which were the top pickup locations with over 13,000 in
 
 Consider only `lpep_pickup_datetime` when filtering by date.
  
-- East Harlem North, East Harlem South, Morningside Heights
+**- East Harlem North, East Harlem South, Morningside Heights**
 - East Harlem North, Morningside Heights
 - Morningside Heights, Astoria Park, East Harlem South
 - Bedford, East Harlem North, Astoria Park
+
+
+Query:
+```
+SELECT 
+    a.pulocationid, 
+	b.zone as pickup_location,
+    SUM(a.total_amount) AS amt
+FROM public.green_taxi_trips a
+JOIN public.taxi_zone_lookup b ON a.pulocationid = b.locationid
+WHERE a.lpep_pickup_datetime >= '2019-10-18' 
+  AND a.lpep_pickup_datetime < '2019-10-19'
+GROUP BY a.pulocationid, b.zone
+ORDER BY amt DESC;
+```
 
 
 ## Question 6. Largest tip
@@ -180,9 +195,26 @@ Note: it's `tip` , not `trip`
 We need the name of the zone, not the ID.
 
 - Yorkville West
-- JFK Airport
+**- JFK Airport**
 - East Harlem North
 - East Harlem South
+
+Query:
+```
+SELECT 
+    a.pulocationid, 
+	b.zone as pickup_zone,
+	c.zone as dropoff_zone,
+    max(a.tip_amount) AS max_tip
+FROM public.green_taxi_trips a
+JOIN public.taxi_zone_lookup b ON a.pulocationid = b.locationid
+JOIN public.taxi_zone_lookup c ON a.dolocationid = c.locationid
+WHERE a.lpep_pickup_datetime >= '2019-10-01' 
+  AND a.lpep_pickup_datetime < '2019-11-01'
+  AND b.zone = 'East Harlem North'
+GROUP BY a.pulocationid, b.zone, c.zone
+ORDER BY max_tip DESC;
+```
 
 
 ## Terraform
@@ -207,7 +239,7 @@ Answers:
 - terraform import, terraform apply -y, terraform destroy
 - teraform init, terraform plan -auto-apply, terraform rm
 - terraform init, terraform run -auto-approve, terraform destroy
-- terraform init, terraform apply -auto-approve, terraform destroy
+**- terraform init, terraform apply -auto-approve, terraform destroy**
 - terraform import, terraform apply -y, terraform rm
 
 
