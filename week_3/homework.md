@@ -120,6 +120,17 @@ What is the best strategy to make an optimized table in Big Query if your query 
 - Cluster on tpep_dropoff_datetime Partition by VendorID
 - Partition by tpep_dropoff_datetime and Partition by VendorID
 
+Query:
+
+```
+CREATE OR REPLACE TABLE `neon-nexus-450515-j8.yellow_taxi_data.green_taxi_data_part`
+PARTITION BY DATE(tpep_pickup_datetime)  -- Partition by `tpep_pickup_datetime` column
+CLUSTER BY PUlocationID  -- Cluster by `PUlocationID` column
+AS
+SELECT *
+FROM `neon-nexus-450515-j8.yellow_taxi_data.yellow_taxi_data`;
+```
+
 
 ## Question 6:
 Write a query to retrieve the distinct VendorIDs between tpep_dropoff_datetime
